@@ -148,3 +148,84 @@ Ejemplo mostrando la nueva configuracion de 1440x900 (resolución tipica en port
 Alcanzado este punto, la máquina virtual se considera creada, configurada y arrancada.
 
 En este momento es fiable proceder al siguiente apartado.
+
+## Recomendaciones
+
+### Actualizar la máquina virtual
+
+Una vez instalada y correctamente configurada, se recomienda actualizar la máquina virtual para disponer de los últimas versiones de los programas.
+
+```bash
+    sudo apt -y update
+    sudo apt -y upgrade
+    sudo apt -y dist-upgrade
+    sudo apt -y autoremove
+```
+
+### Instalación de las utilidades de VirtualBox
+Para poder hacer uso de la compartición de directorios y del portapapeles, se recomienda instalar las utilidades VBoxGuestAdditions en la máquina virtual creada. Para ello, se deben seguir los siguientes pasos:
+
+1. Ir al menú Dispositivos -> Unidades Ópticas y seleccionar la imagen "VBoxGuestAdditions.iso"
+
+![Maquina virtual: Imagen VBoxGuestAdditions.iso](../img/vbox_vm-devel_install_vboxguestadditions.png)
+
+2. Abrir un terminal
+
+3. Ir al directorio del disco
+
+```bash
+cd /media/vmu/VBox_GAs_7.0.0
+```
+
+4. Ejecutar el instalador como root
+```bash
+sudo ./VBoxLinuxAdditions.run
+```
+
+5. Reiniciar la máquina virtual
+```bash
+sudo reboot
+```
+
+Tras este paso, se podrán habilitar las carpetas compartidas así como ajustar la resolución del sistema operativo virtualizado al tamaño de la ventana.
+
+NOTA: si falla el escritorio, este se puede restaurar ejecutando el comando
+```bash
+sudo systemctl restart sddm
+```
+
+### Instalación de Visual Studio Code
+
+Para proceder a la instalación de Visual Studio Code, se puede realizar de dos formas
+
+#### Instalación mediante paquete .deb
+
+1. Descargar de la web https://code.visualstudio.com/Download el último paquete .deb disponible
+2. Ir al directorio de descargas
+```bash
+cd $HOME/Downloads
+3. Instalar dicho paquete
+```
+
+```bash
+dpkg -i ./<file>.deb
+```
+#### Instalación desde el repositorio oficial
+
+Este proceso requiere configurar el repositorio oficial de Microsoft. Para ello, se deben ejecutar los siguientes comandos en un terminal:
+
+```bash
+    cd $HOME/Documents
+    sudo apt-get install wget gpg
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+    sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    rm -f packages.microsoft.gpg
+```
+
+Tras instalar el repositorio oficial, se puede proceder a instalar Visual Studio Code a través del gestor apt.
+```bash
+sudo apt -y install apt-transport-https
+sudo apt -y update
+sudo apt -y install code
+```
